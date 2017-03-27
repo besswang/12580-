@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>查号转接GS</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link href="js/bootstrap-3.3.5/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<!--[if lte IE 9]>
+	<script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.js"></script>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="js/DataTables-1.10.12/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" href="js/bootStrap-addTabs/theme/css/bootstrap-addtabs.css">
+	<link rel="stylesheet" href="common.css">
+</head>
+<body>
+<div class="container-fluid">
+	<h5 class="pb15 mt0">快速查询：</h5>
+	<form class="form-inline">
+		<div class="form-group">
+			<label>姓名:</label>
+			<input type="text" class="form-control" id="name" placeholder="">
+		</div>
+		<div class="form-group">
+			<label>电话:</label>
+			<input type="text" class="form-control" id="tel" placeholder="">
+		</div>
+		<div class="form-group">
+			<label>企业:</label>
+			<input type="text" class="form-control" id="company" placeholder="">
+		</div>
+		<div class="form-group">
+			<label>部门:</label>
+			<input type="text" class="form-control" id="department" placeholder="">
+		</div>
+		<div class="form-group">
+			<button class="btn btn-themeC">查询</button>
+		</div>
+	</form>
+	<table id=data_table data-column='[{"name": "NAME","title": "名称"},{"name": "CODE","title": "编号","visible": false},{"name": "ID","title": "操作","out":"out"}]'></table>
+</div>
+<a class="btn btn-themeC pull-right" data-toggle="modal" data-target="#modal1">转接</a>
+
+<div class="col-md-12">
+	<div id="tabs">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist"></ul>
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="home">
+				<button type="button" class="btn btn-default" addtabs="save" id="save" url="send.html" style="border:1px solid blue;font-size:12px;">
+					<!--<i class="glyphicon glyphicon-floppy-disk"></i>-->
+					发送短信
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:300px;min-width:300px;">
+		<div class="modal-content">
+			<div class="modal-header bb0">
+				<h4 class="modal-title">此站点提示</h4>
+			</div>
+			<div class="modal-body">
+				<p>您确认要转接15057187176吗?</p>
+			</div>
+			<!-- 表格end -->
+			<div class="modal-footer bt0">
+				<button type="button" class="btn btn-themeC">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootStrap-addTabs/theme/js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-3.3.5/dist/js/bootstrap.js"></script>
+<!-- 表格 -->
+<script type="text/javascript" charset="utf8" src="js/DataTables-1.10.12/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="js/DataTables-1.10.12/data_table.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" charset="utf8">
+//	$("#result").load("ajax/test.html", function() {
+//		alert("Load was performed.");
+//	});
+	console.log("22");
+	$(function(){
+		$('#save').click(function(){
+			Addtabs.add({
+				id: $(this).attr('addtabs'),
+				title: $(this).attr('title') ? $(this).attr('title') : $(this).html(),
+				content: Addtabs.options.content ? Addtabs.options.content : $(this).attr('content'),
+				url: $(this).attr('url'),
+				ajax: $(this).attr('ajax') ? true : false
+			})
+		});
+	})
+	window.onload = function(){
+		query_dataTable({table : "#data_table",query : "#query"});
+	};
+
+	$(window).load(function() {
+		alert("hello");
+	});
+</script>
