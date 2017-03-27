@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>群发短信</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="js/bootstrap-3.3.5/dist/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <!--[if lte IE 9]>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.js"></script>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+<link rel="stylesheet" type="text/css" href="js/DataTables-1.10.12/media/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="js/bt-datetimepicker/bootstrap-datetimepicker.min.css">
+<!-- 树 -->
+<link rel="stylesheet" href="js/zTree_v3-master/css/tree.css"/>
+<link rel="stylesheet" href="js/zTree_v3-master/css/blueStyle/blueStyle.css"/>
+<!-- 公共 -->
+<link rel="stylesheet" href="common.css">
+</head>
+<div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading of ptb0">
+            <form class="form-inline">
+                <!--<div class="form-group mtb10">-->
+                    <!--<label>发送企业:</label>-->
+                    <!--<input type="text" class="form-control" style="width:240px;min-width:240px;" disabled>-->
+                <!--</div>-->
+                <div class="form-group mtb10">
+                    <!--<a class="btn btn-themeC" data-toggle="modal" data-target="#modal1">查询</a>-->
+                    <a class="btn btn-themeC" data-toggle="modal" data-target="#modal2">从通讯录加入</a>
+                    <a class="btn btn-themeC" data-toggle="modal" data-target="#modal3">添加临时成员</a>
+                    <label>
+                        <input type="checkbox"> 选择全体成员
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="panel-body">
+            <p>群发对象：</p>
+            <table id="data_table" data-column='[{"name": "two","title": "姓名"},{"name": "three","title": "成员类别"},{"name": "four","title": "手机号码","visible": false},{"name": "five","title": "操作"}]'></table>
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                        <label class="mb0 mr10">是否定时发送:</label>
+                        <label>
+                            <input type="radio" name="o"> 否
+                        </label>
+                        <label>
+                            <input style="margin:4px 0 0 10px" type="radio" name="o" checked> 是
+                        </label>
+                </div>
+                <div class="form-group">
+                    <div class="input-group date" id="TimePicker">
+                        <input type="text" class="form-control" name="datetimeSPicker" id="dataTime" readonly />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </form>
+            <form class="form-horizontal form-write-note" role="form">
+                <div class="form-group write-note">
+                    <p style="overflow:hidden;" class="mt10">
+                        <label class="pull-left mb0 lineH34">短信内容:</label>
+                        <a class="btn btn-themeC pull-right ml10" data-toggle="modal" data-target="#modal5">上行短信</a>
+                        <a class="btn btn-themeC pull-right" data-toggle="modal" data-target="#modal4">短信模版</a>
+                    </p>
+                    <textarea class="form-control" rows="3"></textarea>
+                    <span id="helpBlock" class="help-block">您已输入0个字</span>
+                </div>
+                <div class="form-group center-block">
+                    <button type="submit" class="btn btn-themeC" style="width:18%;margin-left:32%;">发送</button>
+                    <button type="submit" class="btn btn-danger ml15" style="width:18%">关闭页面</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--查询-->
+<!--<div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+   <!--<div class="modal-dialog" style="width:70%;min-width:600px;">-->
+      <!--<div class="modal-content">-->
+          <!--<div class="modal-header bb0">-->
+              <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
+              <!--<h4 class="modal-title center">企业选择</h4>-->
+          <!--</div>-->
+          <!--<div class="modal-body">-->
+            <!--<form class="form-inline" id="findForm">-->
+                <!--<div class="form-group">-->
+                    <!--<label>企业名称</label>-->
+                    <!--<input type="text" class="form-control" name="company">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<label>企业简称</label>-->
+                    <!--<input type="text" class="form-control" name="abbr">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<label>总机号码</label>-->
+                    <!--<input type="text" class="form-control" name="operator">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<label>员工手机号码</label>-->
+                    <!--<input type="text" class="form-control" name="tel">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<button type="button" class="btn btn-themeC" id="findBtn">查询</button>-->
+                    <!--<button type="button" class="btn btn-danger" id="findEmpty">清空</button>-->
+                <!--</div>-->
+            <!--</form>-->
+            <!--<hr class="mt0">-->
+            <!--<table id="data_table2" data-column='[{"name": "two","title": "企业名称"},{"name": "three","title": "企业简介"},{"name": "four","title": "总机号码","visible": false},{"name": "five","title": "企业地址"}]'></table>-->
+          <!--</div>-->
+      <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
+  <!--</div>&lt;!&ndash; /.modal &ndash;&gt;-->
+<!--</div>-->
+<!-- 从通讯录加入 -->
+<div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" style="width:700px;height:578px;">
+      <div class="modal-content">
+          <div class="modal-header bb0">
+            <h4 class="modal-title center">员工选择</h4>
+          </div>
+          <div class="modal-body of">
+               <div class="col-xs-4 border2 br4 viewport1">
+                   <div class="ztree overview" id="treeDemo"></div>
+               </div>
+               <div class="col-xs-4 border2 br4 viewport2">
+                    <input class="form-control" type="text" placeholder="请输入查询关键字">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td class="text-primary"><span class="glyphicon glyphicon-user"></span></td>
+                                <td>小蜗几分</td>
+                                <td>24434</td>
+                            </tr>
+                            <tr>
+                                <td class="text-primary"><span class="glyphicon glyphicon-user"></span></td>
+                                <td>派大星</td>
+                                <td>34234</td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
+               <div class="col-xs-4 border2 br4 viewport3">
+                   <div style="color:#999;line-height:34px;"> 已选成员:<span style="color:#333">3人</span></div>
+                   <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td class="text-primary"><span class="glyphicon glyphicon-user"></span></td>
+                                <td>小蜗几分</td>
+                                <td>24434</td>
+                                <td class="text-danger hand"><span class="glyphicon glyphicon-remove"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-primary"><span class="glyphicon glyphicon-user"></span></td>
+                                <td>派大星</td>
+                                <td>34234</td>
+                                <td class="text-danger hand"><span class="glyphicon glyphicon-remove"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
+          </div>
+      <!-- 表格end -->
+          <div class="modal-footer bt0">
+            <button type="button" class="btn btn-themeC">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal -->
+</div>
+<!-- 添加临时成员 -->
+<div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" style="width:400px;min-width:400px;">
+      <div class="modal-content">
+          <div class="modal-header bb0">
+            <h4 class="modal-title center">临时成员</h4>
+          </div>
+          <div class="modal-body">
+            <form action="" class="form-horizontal">
+                  <div class="form-group">
+                        <label class="col-sm-3 control-label">手机号</label>
+                        <div class="col-sm-8">
+                          <input type="tel" class="form-control">
+                        </div>
+                        <label class="col-sm-1"></label>
+                  </div>
+                  <div class="form-group">
+                        <label class="col-sm-3 control-label">姓名</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control">
+                        </div>
+                        <label class="col-sm-1"></label>
+                  </div>
+              </form>
+          </div>
+      <!-- 表格end -->
+        <div class="modal-footer bt0">
+            <button type="button" class="btn btn-themeC">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal -->
+</div>
+<!--短信模版-->
+<div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title center">短信模版</h4>
+          </div>
+          <div class="modal-body">
+            <p><label><input name="a" type="radio" checked> 移动管家下载链接</label></p>
+            <p><label><input name="a" type="radio"> 云管家下载链接</label></p>
+            <p><label><input name="a" type="radio"> 移动管家客服:尊敬的客户您好，您公司发起的周六聚餐活动于明天早上八点开始实行</label></p>
+          </div>
+      <!-- 表格end -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-themeC">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal -->
+</div>
+<!-- 上行短信 -->
+<div class="modal fade" id="modal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" style="width:70%;min-width:600px;">
+      <div class="modal-content">
+          <div class="modal-header bb0">
+            <h4 class="modal-title center">上行短信</h4>
+          </div>
+          <div class="modal-body">
+            <form action="" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label pr0" style="text-align:left !important;width:85px;min-width:80px;">电话号码</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="name" placeholder="">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-themeC">查询</button>
+                        <button class="btn btn-danger">清空</button>
+                    </div>
+                    <label class="col-sm-4"></label>
+                </div>         
+            </form>
+            <hr>
+            <table class="display table table-striped table-bordered" cellspacing="0" width="100%" style="margin-top:15px;">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>电话号码</th>
+                        <th>短信内容</th>
+                        <th>发送时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+          </div>
+      <!-- 表格end -->
+        <div class="modal-footer bt0">
+            <button type="button" class="btn btn-themeC" data-dismiss="modal">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+         </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal -->
+</div>
+<!--选择公司-->
+<div class="modal fade show" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" show>
+    <div class="modal-dialog" style="width:400px;min-width:400px;">
+        <div class="modal-content">
+            <div class="modal-header bb0">
+                <h4 class="modal-title center">请选择公司</h4>
+            </div>
+            <div class="modal-body temChoce">
+                <a href="#">移动管家下载链接</a>
+                <a href="#">云管家下载链接</a>
+            </div>
+            <!-- 表格end -->
+            <div class="modal-footer bt0">
+                <button type="button" class="btn btn-themeC" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootStrap-addTabs/theme/js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-3.3.5/dist/js/bootstrap.js"></script>
+<!-- 表格 -->
+<script type="text/javascript" charset="utf8" src="js/DataTables-1.10.12/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="js/DataTables-1.10.12/data_table.js"></script>
+<!-- 时间 -->
+<script type="text/javascript" src="js/bt-datetimepicker/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="js/bt-datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+<!-- 树删除 -->
+<script type="text/javascript" src="js/zTree_v3-master/js/jquery.ztree.all.js"></script>
+<script type="text/javascript" src="js/zTree_v3-master/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="js/zTree_v3-master/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script>
+    $(function () {
+        //modal显示居中
+        $("#modal").on('shown.bs.modal', function () {
+            var modal = $("#modal");
+            t=setTimeout(function () {
+                var _modal = $(modal).find(".modal-dialog")
+                _modal.animate({'margin-top': parseInt(($(window).height() - _modal.height())/2)}, 300 )
+            },200)
+        })
+        $('#modal').modal('show');
+        $(".temChoce").on('click','a',function(e){
+            var ee = $(e.target);
+            ee.addClass('current').siblings().removeClass('current');//当前样式
+        })
+
+        var table = query_dataTable({table : "#data_table",query : "#myForm",url:"two.json"});
+//        var table2 = query_dataTable({table : "#data_table2",query : "#myForm",url:"two2.json", sequences:true});
+//        //    查询
+//        $("#findBtn").on("click",function(){
+//            //自己定义的搜索框，可以是时间控件，或者checkbox 等等
+//            var input = JSON.stringify($('#findForm').formJSON());
+//            table2.search(input).draw();
+//            console.log(input);
+//        });
+//        $('#findForm input').bind('keyup',
+//                function(e) {
+//                    //监听回车键
+//                    if (e.keyCode == 13) {
+//                        table2.search(this.value).draw();
+//                        console.log(this.value);
+//                    }
+//        });
+////        查询清空
+//        $("#findEmpty").on("click",function(){
+//            $("[name='company']").val('');
+//            $("[name='abbr']").val('');
+//            $("[name='operator']").val('');
+//            $("[name='tel']").val('');
+//            var input = JSON.stringify($('#findForm').formJSON());
+//            table2.search(input).draw();
+//            console.log(input);
+//        })
+    });
+    //    是否定时发送
+    $('[name="o"]:eq(0)').click(function(){
+        $("#TimePicker").slideUp();
+    });
+    $('[name="o"]:eq(1)').click(function(){
+        $("#TimePicker").slideDown();
+    });
+//表格内容超出,省略...
+
+//    render: function (data, type, row, meta) {
+//        return '<a type="button" class="btn btn-danger btn-block" href="#" onclick=delFromID(' + row.id + ') >删除</a>';
+//    }
+
+
+
+//    function sendSms(data, row) {
+//        return data + '<a class="send" href="send.html">发送短信</a>';
+//    }
+//    function delRow(data,type,row,meta){
+//         var del = '<a class="del">删除</a>';
+//        del.on('click',function(){
+//            row.Delete();
+//        })
+//        return del;
+//    }
+
+    // 树
+    // 树start
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: false , //显示复选框
+            chkStyle: "checkbox",
+            // chkboxType: { "Y": "s", "N": "p" }
+            nocheckInherit: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            },
+            keep: {
+                leaf: true
+            }
+        },
+        callback: {
+            beforeCheck: beforeCheck,
+            onCheck: onCheck
+        },
+        // view:{
+        //   selectedMulti:false
+        // }
+    };
+
+    var zNodes =[
+        {id:1, pId:0, name:"区域经理来得及发了过节费到了该减肥"},
+        {id:2, pId:0, name:"区域经理2"},
+        {id:3, pId:0, name:"区域经理2"},
+        {id:4, pId:0, name:"产品部", open:true},
+        {id:40, pId:4, name:"子部门",open:true},
+        {id:401, pId:40, name:"子成员1",open:true},
+        {id:402, pId:40, name:"子成员2",open:true},
+        {id:41, pId:4, name:"子部门",open:true},
+        {id:411, pId:41, name:"子成员1",open:true},
+        {id:412, pId:41, name:"子成员2",open:true},
+        {id:413, pId:41, name:"子成员3",open:true},
+        {id:414, pId:41, name:"子成员4",open:true},
+        {id:42, pId:4, name:"子成员",open:true},
+        {id:5, pId:0, name:"营销部", open:true},
+        {id:51, pId:5, name:"子成员"},
+        {id:52, pId:5, name:"子成员"},
+        {id:6, pId:0, name:"市场部", open:true},
+        {id:61, pId:6, name:"子成员"},
+        {id:62, pId:6, name:"子成员"},
+        {id:7, pId:0, name:"市场部", open:true},
+        {id:71, pId:7, name:"子成员"},
+        {id:72, pId:7, name:"子成员"}
+    ];
+    var code, mylog, className = "dark";
+    function beforeCheck(treeId, treeNode,clickFlag) {
+// 在需要控制zTree对象的时候在灵活获取，避免了全局变量的泄漏；
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        // zTree.checkNode(treeNode, !treeNode.checked, null, true);
+        className = (className === "dark" ? "":"dark");
+        // showmyLog( treeNode.name );//显示该节点的name
+        // for(treeNode.tId !== 0){showmyLog( treeNode )}
+        return (treeNode.onCheck !== false);
+    }
+    function getAllChildrenNodes(treeNode,result){
+        if (treeNode.isParent) {
+            var childrenNodes = treeNode.children;
+            if (childrenNodes) {
+                for (var i = 0; i < childrenNodes.length; i++) {
+                    result +=  childrenNodes[i].id+',';
+                    result = getAllChildrenNodes(childrenNodes[i], result);
+                }
+            }
+        }
+        return result;
+    }
+    // window.onload = addContent;
+    // function addContent(){
+    //         var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+    //                 nodes = zTree.getCheckedNodes(true),//获取当前被勾选的节点集合
+    //                 nodesArr=[],nodePidArr=[],pid="";//pid表示节点的父子包含
+    //                 var countPeople = 0 ;
+
+    //         for (var i=0; i<nodes.length; i++) {
+    //           // 把节点点击赋值
+    //              // $("#textClass").val(nodes.length);
+    //           // 部门与人员区分区分方式是2和－1；
+    //           // 获取点击部门的个数；
+    //           // 获取点击人员的个数；
+    // //第一步，找到产品部；
+    //             if(nodes[i].check_Child_State ==2){//2指的是部门
+    //                 var str ="";
+
+    //                 str = getAllChildrenNodes(nodes[i],str);//获取所有子节点
+    // //第二步 计算产品部下面的成员个数；                // 搜索字符串，相关部门下面成员的个数
+    //                 var count = str.match(/,/g).length;
+    // //产品部＋成员个数；
+    //                var txt = nodes[i].attr("name");
+    //                txt = txt+count;
+    //             }else{
+    //               return false;
+    //             }
+    //         }
+
+
+
+    // }
+    function onCheck(e, treeId, treeNode) {
+        //onCheck([object Object],treeDemo,[object Object]
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+                nodes = zTree.getCheckedNodes(true),//获取当前被勾选的节点集合
+                nodesArr=[],nodePidArr=[],pid="";//pid表示节点的父子包含
+        var countPeople = 0 ;
+
+        for (var i=0; i<nodes.length; i++) {
+            // 把节点点击赋值
+            // $("#textClass").val(nodes.length);
+            // 部门与人员区分区分方式是2和－1；
+            // 获取点击部门的个数；
+            // 获取点击人员的个数；
+            if(nodes[i].check_Child_State ==2){//2指的是部门
+                var str ="";
+
+                str = getAllChildrenNodes(nodes[i],str);//获取所有子节点
+                // 搜索字符串
+                var count = str.match(/,/g).length;
+
+                countPeople += count;//countPeople = countPelop+count;
+                // push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+                nodesArr.push(nodes[i]);
+                i = i+count;
+            }else if(nodes[i].check_Child_State ==-1 ){//-1指的是人员
+                countPeople++;
+                nodesArr.push(nodes[i])
+            }
+        }
+
+        //获取部门或人员的文本字数，判断如果超过20个字符，就自动截取后半部分，并用省略号
+        // nodesArr当前节点的对象
+        showmyLog(nodesArr);
+        $("#countPeople").val(countPeople);
+        // console.log(nodesArr);
+
+        // showmyLog(treeDemo);
+    }
+    function CheckAllNodes() {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        var checkall = document.getElementById("checkall");
+        if(checkall.checked){
+            zTree.checkAllNodes(true);
+            onCheck();
+        }else{
+            zTree.checkAllNodes(false);
+            $("#mylog").empty();
+        }
+    }
+    function showmyLog(nodesArr) {
+        mylog = $("#mylog");
+        $("#mylog").empty();
+        if(nodesArr!= null){
+            for(var i = 0;i<nodesArr.length;i++){
+                mylog.append("<div class='alert alert-info alert-dismissable self-delete' id='sms"+nodesArr[i].id+"'><button type='button' class='close deltext'>&times;</button><li class='"+className+"'>"+nodesArr[i].name.substring(0,10)+"</li></div>");
+            }
+        }
+
+        // jquery 可以用text()方法来取得字符串，再用length 判断长度，然后用substring()方法格式化截断
+        $(".alert").on("click",".deltext",function(){
+            var adId = $(this).parent().attr("id");
+            // 截取字符
+            var delsms = adId.substring(3);
+            // 删除
+            $('#'+$(this).parent().attr("id")).remove();
+            // 通过id找到勾选点节点
+            var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodeoo = treeObj.getNodeByParam("id", delsms, null);
+            treeObj.checkNode(nodeoo, false, true);
+            // treeObj.checkAllNodes(false);
+            // 遍历出点击节点的个数
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+                    nodes = zTree.getCheckedNodes(true),//获取当前被勾选的节点集合
+                    nodesArr=[],nodePidArr=[],pid="";//pid表示节点的父子包含
+            var countPeople = 0 ;
+            for (var i=0; i<nodes.length; i++) {
+                // 把节点点击赋值
+                // $("#textClass").val(nodes.length);
+                // 部门与人员区分区分方式是2和－1；
+                // 获取点击部门的个数；
+                // 获取点击人员的个数；
+                if(nodes[i].check_Child_State ==2){//2指的是部门
+                    var str ="";
+                    str = getAllChildrenNodes(nodes[i],str);//获取所有子节点
+                    // 搜索字符串
+                    var count = str.match(/,/g).length;
+                    // push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+                    countPeople += count;
+                    nodesArr.push(nodes[i]);
+                    i = i+count;
+                }else if(nodes[i].check_Child_State ==-1 ){//-1指的是人员
+                    countPeople++;
+                    nodesArr.push(nodes[i])
+                }
+            }
+            // nodesArr当前节点的对象
+            $("#countPeople").val(countPeople);
+        })
+    }
+
+    //  data-dismiss='alert' aria-hidden='true'
+
+    // 遍历得出部门的总人数，在赋值给textclass；
+
+    // 获取部门与人员的占位符
+    // var textClass = $("#textClass").val();
+    // var textPeople = $("#textPeople").value;
+
+    // function getTime() {
+    //   var now= new Date(),
+    //   h=now.getHours(),
+    //   m=now.getMinutes(),
+    //   s=now.getSeconds(),
+    //   ms=now.getMilliseconds();
+    //   return (h+":"+m+":"+s+ " " +ms);
+    // }
+    // 勾选当前选中的节点
+    function checkNode(e) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+                type = e.data.type,
+                nodes = zTree.getSelectedNodes();
+        if (type.indexOf("All")<0 && nodes.length == 0) {
+            alert("Please select one node at first...");
+        }
+        if (type == "checkAllTrue") {
+            zTree.checkAllNodes(true);
+        } else if (type == "checkAllFalse") {
+            zTree.checkAllNodes(false);
+        } else {
+            var callbackFlag = $("#callbackTrigger").attr("checked");
+            for (var i=0, l=nodes.length; i<l; i++) {
+                if (type == "checkTrue") {
+                    zTree.checkNode(nodes[i], true, false, callbackFlag);
+                } else if (type == "checkFalse") {
+                    zTree.checkNode(nodes[i], false, false, callbackFlag);
+                } else if (type == "toggle") {
+                    zTree.checkNode(nodes[i], null, false, callbackFlag);
+                }else if (type == "checkTruePS") {
+                    zTree.checkNode(nodes[i], true, true, callbackFlag);
+                } else if (type == "checkFalsePS") {
+                    zTree.checkNode(nodes[i], false, true, callbackFlag);
+                } else if (type == "togglePS") {
+                    zTree.checkNode(nodes[i], null, true, callbackFlag);
+                }
+            }
+        }
+    }
+    function setAutoTrigger(e) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        zTree.setting.check.autoCheckTrigger = $("#autoCallbackTrigger").attr("checked");
+        $("#autoCheckTriggerValue").html(zTree.setting.check.autoCheckTrigger ? "true" : "false");
+    }
+    $(document).ready(function(){
+        // 在id为treeDemo的元素上使用setting，zNodes设置对象,初始化为一个zTree对象；
+        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        $("#checkTrue").bind("click", {type:"checkTrue"}, checkNode);
+        $("#checkFalse").bind("click", {type:"checkFalse"}, checkNode);
+        $("#toggle").bind("click", {type:"toggle"}, checkNode);
+        $("#checkTruePS").bind("click", {type:"checkTruePS"}, checkNode);
+        $("#checkFalsePS").bind("click", {type:"checkFalsePS"}, checkNode);
+        $("#togglePS").bind("click", {type:"togglePS"}, checkNode);
+        $("#checkAllTrue").bind("click", {type:"checkAllTrue"}, checkNode);
+        $("#checkAllFalse").bind("click", {type:"checkAllFalse"}, checkNode);
+        $("#autoCallbackTrigger").bind("change", {}, setAutoTrigger);
+    });
+    //树end
+</script>
